@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 981890050018728554}
   - component: {fileID: 981890050018728555}
+  - component: {fileID: 7715232925394677536}
   m_Layer: 0
   m_Name: RouteBuilder
   m_TagString: Untagged
@@ -44,5 +45,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d40d5bde36c313c419d2d383f2f5d127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maingame: {fileID: 0}
+--- !u!114 &7715232925394677536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 981890050018728552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66d7ad69d23732a438c0e717c723e4ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   RoutePrefab: {fileID: 176689857191652287, guid: 035b7d5ce73a7df4793673568bbd0c3c, type: 3}

@@ -75,11 +75,15 @@ public class IcwGameFlow : MonoBehaviour, IGame
         Vector3 pos;
         if (gameState != IGame.EnumGameState.GameOver && gameState != IGame.EnumGameState.GameWin)
             EndGame();
-        if (gameState == IGame.EnumGameState.GameWin && ItemsCount < 11) ItemsCount++;
-        routeBuilder = Instantiate(RouteBuilderPrefab, this.transform);
+        if (gameState == IGame.EnumGameState.GameWin && ItemsCount < 11) 
+            ItemsCount++;
         List<Vector3> objectsPositionList = new List<Vector3>();
         player = Instantiate(PlayerPrefab, Vector3.zero, Quaternion.identity);
         objectsPositionList.Add(Vector3.zero);
+        
+        routeBuilder = Instantiate(RouteBuilderPrefab, this.transform);
+        routeBuilder.GetComponent<IcwRouteBuilder>().walker = player.GetComponent<IWalker>();
+        
         if (gameState == IGame.EnumGameState.GameOver)
         {
             // Reset previous field
@@ -137,15 +141,22 @@ public class IcwGameFlow : MonoBehaviour, IGame
         }
 
         string atext = "";
-        if (gameState == IGame.EnumGameState.GameWin)
-            atext = "Game Paused.";
 
-        if (gameState == IGame.EnumGameState.GameWin)
-            atext = "Good job.\r\n\r\nTry again.\r\n\r\nGet all coins!\r\n";
-        if (gameState == IGame.EnumGameState.GameOver)
-            atext = "U'are dead.\r\n\r\nAvoid contacs with Angry flowers.\r\n\r\nGet all coins!\r\n";
         if (gameState == IGame.EnumGameState.FirstStart)
-            atext = "Tap on the screen to build a route.\r\n\r\nAvoid contacs with Angry flowers.\r\n\r\nGet all coins!\r\n";
+            atext = $"Tap on the screen to build a route.\r\n\r\nAvoid contacs with angry flowers.\r\n\r\nGet all coins by {ItemsCount + 1} clicks!\r\n";
+        if (gameState == IGame.EnumGameState.GameOver)
+            atext = $"U'are dead.\r\n\r\nAvoid contacs with angry flowers.\r\n\r\nGet all coins by {ItemsCount + 1} clicks!\r\n";
+        if (gameState == IGame.EnumGameState.GameWin)
+        {
+            int numclicks = routeBuilder.GetComponent<IcwRouteBuilder>().RouteItemsCount;
+            if (numclicks <= ItemsCount + 1)
+                atext = $"Good job.\r\n\r\nYou've got it by {numclicks} of {ItemsCount + 1} click.\r\n\r\nGet all coins by {ItemsCount + 2} clicks!\r\n";
+            else
+            {
+                atext = $"Not bad.\r\n\r\nBut you've got it just by {numclicks} of {ItemsCount + 1} click.\r\n\r\nGet all coins by {ItemsCount + 1} clicks!\r\n";
+                gameState = IGame.EnumGameState.GameOver;
+            }
+        }
 
         UiWindowClass.SetStateText(atext);
         UiWindowClass.SetGame(this);
@@ -159,26 +170,21 @@ public class IcwGameFlow : MonoBehaviour, IGame
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Home) || Input.GetKey(KeyCode.Escape) || Input.GetKey(KeyCode.Menu) || Input.GetKey(KeyCode.P))
-        {
-            //Input.ResetInputAxes();
-            if (gameState != IGame.EnumGameState.Paused)
-            {
-                gameState = IGame.EnumGameState.Paused;
-                ShowUiWindow();
-            }
-            else
-            {
-                Application.Quit();
-            }
-        }
-
         if (gameState == IGame.EnumGameState.InProgress)
         {
             CheckGameState();
             if (gameState == IGame.EnumGameState.GameOver || gameState == IGame.EnumGameState.GameWin)
                 EndGame();
             if (gameState != IGame.EnumGameState.InProgress) ShowUiWindow();
+        }
+    }
+
+    private void OnGUI()
+    {
+        if (Input.GetKey(KeyCode.Home) || Input.GetKey(KeyCode.Escape) || Input.GetKey(KeyCode.Menu))
+        {
+            if (gameState != IGame.EnumGameState.InProgress)
+                Application.Quit();
         }
     }
 }
